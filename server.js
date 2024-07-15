@@ -17,6 +17,28 @@ mongoose.connect(process.env.CONN_STR, {
     console.log('Some error has occured.');
 });
 
+
+const movieSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required : [true, 'Name is required field!'],
+        unique: true
+    },
+    description: String,
+    duration: {
+        type: Number,
+        required: [true, 'Duration is required field!']
+    },
+    rating: {
+        type: Number,
+        default: 1.0
+    },
+
+});
+
+const Movie = mongoose.model('Movie', movieSchema);
+
+
 // CREATER SERVER   
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
