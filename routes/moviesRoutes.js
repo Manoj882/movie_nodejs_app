@@ -12,7 +12,7 @@ const router = express.Router();  // act as middleware
 
 router.route('/')
     .get(moviesController.getAllMovies)
-    .post(moviesController.validateBody, moviesController.createMovie);
+    .post(moviesController.createMovie);
 
 router.route('/:id')
     .get(moviesController.getMovie)    
