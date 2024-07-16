@@ -8,7 +8,7 @@ const router = express.Router();  // act as middleware
 //     next();
 // });
 
-router.param('id', moviesController.checkId);
+//router.param('id', moviesController.checkId);
 
 router.route('/')
     .get(moviesController.getAllMovies)
