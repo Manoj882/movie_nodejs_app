@@ -12,7 +12,7 @@ mongoose.connect(process.env.CONN_STR).then((conn) => {
     // console.log(conn);
     console.log('DB Connection Successful...');
 }).catch((error) => {
-    console.log('Some error has occured.');
+    console.log('Some error has occured. ' + error);
 });
 
 // CREATER SERVER   
