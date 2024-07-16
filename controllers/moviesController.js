@@ -6,16 +6,19 @@ const movies = JSON.parse(moviesJson);
 
 exports.getAllMovies = async (req, res) => {
     try{
-        // const movies = await Movie.find({duration: +req.query.duration, ratings: +req.query.ratings});
-        //const movies = await Movie.find(req.query);
 
-        const excludeFields = ['sort', 'page', 'limit', 'fields'];
+        // const excludeFields = ['sort', 'page', 'limit', 'fields'];
 
-        const queryObj = {...req.query}; // create swallow copy
+        // const queryObj = {...req.query}; // create swallow copy
 
-        excludeFields.forEach((el) => {
-            delete queryObj[el];
-        });
+        // excludeFields.forEach((el) => {
+        //     delete queryObj[el];
+        // });
+
+        let queryStr = JSON.stringify(req.query);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+        const queryObj = JSON.parse(queryStr);
+        console.log(queryObj);
 
         const movies = await Movie.find(queryObj);
 
