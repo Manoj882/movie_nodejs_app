@@ -4,9 +4,20 @@ const Movie = require('./../models/movieModel')
 const moviesJson = fs.readFileSync('./data/movies.json'); 
 const movies = JSON.parse(moviesJson);
 
-exports.getAllMovies = async  (req, res) => {
+exports.getAllMovies = async (req, res) => {
     try{
-        const movies = await Movie.find();
+        // const movies = await Movie.find({duration: +req.query.duration, ratings: +req.query.ratings});
+        //const movies = await Movie.find(req.query);
+
+        const excludeFields = ['sort', 'page', 'limit', 'fields'];
+
+        const queryObj = {...req.query}; // create swallow copy
+
+        excludeFields.forEach((el) => {
+            delete queryObj[el];
+        });
+
+        const movies = await Movie.find(queryObj);
 
         res.status(200).json({
             status: 'success',
