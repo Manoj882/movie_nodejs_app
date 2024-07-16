@@ -1,28 +1,16 @@
 [
     {
-        "id": 1,
-        "name": "Die Hard",
-        "releaseYear": 1998,
-        "duration": 90
-    },
-    {
-        "id": 2,
-        "name": "Expandables",
-        "releaseYear": 2008,
-        "duration": 80
-    },
-    {
-        "id": 3,
-        "name": "Intersteller",
-        "releaseYear": 2014,
-        "duration": 120
-    },
-    {
-        "id": 5,
-        "name": "The Thore",
-        "releaseYear": 2014,
-        "duration": 180
+        "name": "Inception",
+        "description": "A mind-blowing movie about dreams within dreams",
+        "duration": 148,
+        "ratings": 8.8,
+        "totalRating": 2100000,
+        "releaseYear": 2010,
+        "releaseDate": "2010-07-16",
+        "genres": ["Science Fiction", "Action", "Thriller"],
+        "directors": ["Christopher Nolan"],
+        "coverImage": "inception.jpg",
+        "actors": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"],
+        "price": 9.99
     }
 ]
-
-
