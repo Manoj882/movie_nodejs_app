@@ -1,8 +1,6 @@
-const fs = require('fs');
+
 const Movie = require('./../models/movieModel')
 
-const moviesJson = fs.readFileSync('./data/movies.json'); 
-const movies = JSON.parse(moviesJson);
 
 exports.getAllMovies = async (req, res) => {
     try{
@@ -15,33 +13,67 @@ exports.getAllMovies = async (req, res) => {
         //     delete queryObj[el];
         // });
 
+
         let queryStr = JSON.stringify(req.query);
-        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+        const regex = /\b(gte|gt|lte|lt)\b/g;
+        queryStr = queryStr.replace(regex, (match) => `$${match}`);
         const queryObj = JSON.parse(queryStr);
        // console.log(queryObj);
 
-        if(req.query.sort){
-            delete queryObj.sort;
-        }
+        // if(req.query.sort){
+        //     delete queryObj.sort;
+        // }
 
-        let query =  Movie.find(queryObj);
+        let query = Movie.find(queryObj);
 
+
+        // console.log('query data: ' + query);
+
+        // SORTING LOGIC
         if(req.query.sort){
             const sortBy = req.query.sort.split(',').join(' ');
             // console.log(sortBy);
             query = query.sort(sortBy);
         } else {
+            
             query = query.sort('-createdAt')
         }
+
+        // LIMITING FIELDS
+        if(req.query.fields){
+            // query.select('name duration price ratings');
+
+            const fields = req.query.fields.split(',').join(' ');
+            console.log(fields);
+            query = query.select(fields);
+
+        } else{
+            query = query.select('-__v');
+        }
+
+        // PAGINATION
+        const page = req.query.page * 1 || 1;
+        const limit = req.query.limit * 1 || 10;
+        const skip = (page - 1) * limit;
+        query = query.skip(skip).limit(limit);
+
+        if(req.query.page){
+            const moviesCount = await Movie.countDocuments();
+            if(skip >= moviesCount){
+                throw new Error('This page is not found!');
+            }
+        }
+
 
         const movies = await query;
 
         res.status(200).json({
             status: 'success',
+            totalCount: movies.length,
             data: {
                 movies
             },
-            totalCount: movies.length,
+            
         });
     } catch(err){
         res.status(404).json({
