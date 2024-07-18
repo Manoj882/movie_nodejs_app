@@ -55,6 +55,13 @@ const movieSchema = new mongoose.Schema({
         required: [true, 'Price is required field!']
     }
 
+}, {
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
+});
+
+movieSchema.virtual('durationInHours').get(function(){
+    return this.duration / 60;
 });
 
 const Movie = mongoose.model('Movie', movieSchema);
