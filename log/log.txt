@@ -1,0 +1,6 @@
+A new movie document with name Black Adam has been created by Manoj BK
+
+
+A new movie document with name Sampe Movie has been created by Manoj BK
+A new movie document with name Sampe Movie has been created by Manoj BK
+Query took 72 milliseconds to fetch the documents.

@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const fs = require('fs')
 
 const movieSchema = new mongoose.Schema({
     name: {
@@ -53,7 +54,8 @@ const movieSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: [true, 'Price is required field!']
-    }
+    },
+    createdBy: String
 
 }, {
     toJSON: {virtuals: true},
@@ -62,6 +64,42 @@ const movieSchema = new mongoose.Schema({
 
 movieSchema.virtual('durationInHours').get(function(){
     return this.duration / 60;
+});
+
+// EXECUTED BEFORE THE DOCUMENT IS SAVED IN DB
+// .save() or .create()
+
+movieSchema.pre('save', function(next){
+    this.createdBy = 'Manoj BK';
+    console.log(this);
+    next();
+});
+
+movieSchema.post('save', function(doc, next){
+    const content = `A new movie document with name ${doc.name} has been created by ${doc.createdBy}\n`;
+
+    fs.writeFileSync('./log/log.txt', content, {flag: 'a'}, (err) => {
+        console.log(err.message);
+    });
+    next();
+});
+
+movieSchema.pre(/^find/, function(next){  // for both find() and findOne()
+    this.find({releaseDate: {$lte: Date.now()}});
+    this.startTime = Date.now();
+    next();
+});
+
+movieSchema.post(/^find/, function(docs, next){ 
+    this.find({releaseDate: {$lte: Date.now()}});
+    this.endTime = Date.now();
+
+    const content = `Query took ${this.endTime - this.startTime} milliseconds to fetch the documents.`;
+
+    fs.writeFileSync('./log/log.txt', content, {flag: 'a'}, (err) => {
+        console.log(err.message);
+    });
+    next();
 });
 
 const Movie = mongoose.model('Movie', movieSchema);
