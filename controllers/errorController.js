@@ -10,10 +10,18 @@ const devErrors = (res, error) => {
 }
 
 const prodErrors = (res, error) => {
-    res.status(error.statusCode).json({
-        status: error.statusCode,
-        message: error.message,
-    });
+    
+    if(error.isOperational){
+        res.status(error.statusCode).json({
+            status: error.statusCode,
+            message: error.message,
+        });
+    } else {
+        res.status(500).json({
+            status: 'error',
+            message: 'Something went wrong! Please try again later.'
+        });
+    }
 }
 
 module.exports = (error, req, res, next) => {
