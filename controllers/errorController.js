@@ -14,6 +14,14 @@ const castErrorHandler = (err) => {
     return new CustomError(msg, 400);
 }
 
+const duplicateKeyErrorHandler = (err) => {
+    const name = err.errorResponse.keyValue.name;
+    const msg = `There is already a movie with name ${name}. Please use another name!`;
+    return new CustomError(msg, 400);
+
+}
+
+
 const prodErrors = (res, error) => {
     
     if(error.isOperational){
@@ -37,10 +45,10 @@ module.exports = (error, req, res, next) => {
     if(process.env.NODE_ENV === 'development'){
         devErrors(res, error);
     } else if(process.env.NODE_ENV === 'production'){
-       if(error.name === 'CastError'){
-        error = castErrorHandler(error);
+       if(error.name === 'CastError') error = castErrorHandler(error);
+       if(error.errorResponse.code = 11000) error = duplicateKeyErrorHandler(error);
         
-       }
+       
        prodErrors(res, error);
     }  
 }
