@@ -11,12 +11,20 @@ console.log(process.env);
 mongoose.connect(process.env.CONN_STR).then((conn) => {
     // console.log(conn);
     console.log('DB Connection Successful...');
-}).catch((error) => {
-    console.log('Some error has occured. ' + error);
 });
 
 // CREATER SERVER   
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+
+const server = app.listen(port, () => {
     console.log('Server has started...');
+});
+
+process.on('unhandledRejection', (err) => {
+    console.log(err.name, err.message);
+    console.log('Unhandled rejection occured! Shutting down...');
+    server.close(() => {
+        process.exit(1);
+
+    });
 });
