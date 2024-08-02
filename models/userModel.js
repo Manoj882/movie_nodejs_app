@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const validator = require('validator')
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 // name, email, password, confirm password, photo
 
@@ -23,10 +24,28 @@ const userSchema = mongoose.Schema({
     },
     confirmPassword: {
         type: String,
-        required: [true, 'Please enter confirm password.']
+        required: [true, 'Please enter confirm password.'],
+        validate: {
+            // This validator will only work for save() & create() not for update(), findOne()
+            validator: function(val){
+                return val == this.password;
+            },
+            message: 'Password & Confirm Password does not match!'
+        }
     }
 });
 
-const User = mongoose.Model('User', userSchema);
+// pre-save middleware  ---> perform before saving the data in database
+userSchema.pre('save', async function(next){
+    if(!this.isModified('password')) return next();
+
+    //encrypt the passsword before saving it
+    this.password = await bcrypt.hash(this.password, 12);
+    this.confirmPassword = undefined;
+    next();
+
+});1
+
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan')
 const moviesRouter = require('./routes/moviesRoutes');
+const authRouter = require('./routes/authRoutes');
 const CustomError = require('./utils/CustomError');
 const globalErrorHandler = require('./controllers/errorController');
 
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 });
 
 
+app.use('/api/v1/users', authRouter);  
 app.use('/api/v1/movies', moviesRouter);   
 
 // Default Routes
