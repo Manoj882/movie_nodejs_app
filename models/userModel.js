@@ -33,7 +33,9 @@ const userSchema = mongoose.Schema({
             },
             message: 'Password & Confirm Password does not match!'
         }
-    }
+    },
+    passwordChangedAt: Date
+
 });
 
 // pre-save middleware  ---> perform before saving the data in database
@@ -49,6 +51,19 @@ userSchema.pre('save', async function(next){
 
 userSchema.methods.comparePasswordInDb = async function(psw, pswDB){
    return await bcrypt.compare(psw, pswDB);
+}
+
+
+userSchema.methods.isPasswordChanged = async function(JWTTimestamp){
+    if(this.passwordChangedAt){
+        const passwordChangedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        console.log(passwordChangedTimestamp, JWTTimestamp);
+
+        return JWTTimestamp < passwordChangedTimestamp;
+        
+
+    }
+    return false;
 }
 
 const User = mongoose.model('User', userSchema);
