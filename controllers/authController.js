@@ -112,3 +112,27 @@ exports.signup = asyncErrorHandler(async (req, res, next) => {
 
     next();
  });
+
+ // this wrapper function return middle ware function
+ exports.restrict = (role) => {
+    return(req, res, next) => {
+        if(req.user.role !== role){
+            const error = new CustomError('You do not have permission to perform this action', 403);
+            next(error);
+        }
+        next();
+    }
+ }
+ 
+
+ // for multiple roles to perform same given action
+
+ exports.restrict = (...role) => {  // (... => rest operator => acts as array)
+    return(req, res, next) => {
+        if(!role.includes(req.user.role)){
+            const error = new CustomError('You do not have permission to perform this action', 403);
+            next(error);
+        }
+        next();
+    }
+ }

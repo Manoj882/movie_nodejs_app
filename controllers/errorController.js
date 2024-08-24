@@ -40,7 +40,8 @@ const prodErrors = (res, error) => {
     
     if(error.isOperational){
         res.status(error.statusCode).json({
-            status: error.statusCode,
+            // status: error.statusCode,
+            status: 'fail',
             message: error.message,
         });
     } else {
