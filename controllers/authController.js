@@ -14,18 +14,23 @@ const signToken = id => {
     });
 };
 
-exports.signup = asyncErrorHandler(async (req, res, next) => {
-    const newUser = await User.create(req.body);
+const createSendResponse = (user, statusCode, res) => {
+    const token = signToken(user._id);
 
-    const token = signToken(newUser._id);
-
-    res.status(201).json({
+    res.status(statusCode).json({
         status: 'success',
         token,
         data: {
-            user: newUser,
+            user
         }
     });
+}
+
+exports.signup = asyncErrorHandler(async (req, res, next) => {
+    const newUser = await User.create(req.body);
+    createSendResponse(newUser, 201, res);
+
+    
 });
 
 exports.login = asyncErrorHandler(async (req, res, next) => {
@@ -54,13 +59,7 @@ exports.login = asyncErrorHandler(async (req, res, next) => {
         return next(error);
     }
 
-    const token = signToken(user._id);
-
-
-    res.status(200).json({
-        status: 'success',
-        token
-    });
+    createSendResponse(user, 200, res);
 });
 
 
@@ -216,13 +215,34 @@ exports.resetPassword = asyncErrorHandler (async (req, res, next) => {
 
     // 3. LOGIN THE USER
     
-    const loginToken = signToken(user._id);
-
-    res.status(200).json({
-        status: 'success',
-        token: loginToken
-    });
-
-
-
+    createSendResponse(user, 200, res);
+   
 });
+
+exports.changePassword = asyncErrorHandler( async(req, res, next) => {
+    
+    // 1. GET CURRENT USER DATA FROM DATABASE
+
+    const user = await User.findById(req.user._id).select('+password');
+
+    // 2. CHECK IF THE SUPPIED CURRENT PASSWORD IS CORRECT
+
+    if(!(await user.comparePasswordInDb(req.body.currentPassword, user.password))){
+        return next(new CustomError('The current password you provided is wrong', 401));
+
+    }
+
+    // 3. IF SUPPIED PASSWORD IS CORRECT, UPDATE USER PASSWORD WITH NEW VALUE
+
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
+
+    await user.save();
+
+    // 4. LOGIN USER AND SEND JWT
+
+    createSendResponse(user, 200, res);
+
+}
+
+);
