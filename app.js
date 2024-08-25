@@ -5,6 +5,8 @@ const authRouter = require('./routes/authRoutes');
 const CustomError = require('./utils/CustomError');
 const globalErrorHandler = require('./controllers/errorController');
 
+const userRouter = require('./routes/userRoute');
+
 let app = express();
 
 const logger = function(req, res, next){
@@ -29,8 +31,9 @@ app.use((req, res, next) => {
 });
 
 
-app.use('/api/v1/users', authRouter);  
+app.use('/api/v1/auth', authRouter);  
 app.use('/api/v1/movies', moviesRouter);   
+app.use('/api/v1/user', userRouter); 
 
 // Default Routes
 app.all('*', (req, res, next) => {

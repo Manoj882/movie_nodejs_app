@@ -14,12 +14,12 @@ const router = express.Router();  // act as middleware
 router.route('/highest-rated').get(moviesController.getHighestRated, moviesController.getAllMovies);
 
 router.route('/')
-    .get(authController.prtoect, moviesController.getAllMovies)
+    .get(authController.protect, moviesController.getAllMovies)
     .post(moviesController.createMovie);
 
 router.route('/:id')
-    .get(authController.prtoect, moviesController.getMovie)    
+    .get(authController.protect, moviesController.getMovie)    
     .patch(moviesController.updateMovie)
-    .delete(authController.prtoect, authController.restrict('admin'), moviesController.deleteMovie);
+    .delete(authController.protect, authController.restrict('admin'), moviesController.deleteMovie);
 
 module.exports = router;
